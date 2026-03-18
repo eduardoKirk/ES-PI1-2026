@@ -6,13 +6,31 @@ class Eleitor:
         self.mesario = mesario
 
 def menu():
-    cadastrar
-    registrar
-    buscar
-    remover
-    editar
-    listar
     a = input("escolha uma opção:\n1-cadastrar eleitor\n2-buscar eleitor\n3-listar eleitor\n4-remover celeitor\n5-editar eleitor")
+    while not a == 6:
+        match a:
+            case 1: 
+                cadastrar_eleitor()
+            # case 2:
+            #     # buscar_eleitor()
+            # case 3:
+            #     # remover_eleitor()
+            # case 4:
+            #     # editar_eleitor()
+            # case 5:
+            #     # listar_eleitor()
+            # case 6:
+            #     # print("Sair..")
+                
+    # cadastrar
+    # registrar
+    # buscar
+    # remover
+    # editar
+    # listar
+  
+   
+
 def cadastrar_eleitor():
     nome = input("digite o nome: ")
     cpf = input("digite o cpf: ")
