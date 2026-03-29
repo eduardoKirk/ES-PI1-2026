@@ -17,7 +17,7 @@ def matrixMultiplication(a, b):
         for j in range(colunasB):
             soma = 0
             soma += a[i][j] * b[i][j]
-            print(a[i][j], b[i][j])
+            # print(a[i][j], b[i][j])
             linha.append(soma)
         matrizResultado.append(linha)
 
@@ -67,11 +67,13 @@ def hillCipher(p, k):
     n = 2
     divisao = [p[i:i + n] for i in range(0, len(p), n)]
     pNum = transformaEmNumero(divisao)
-    pNum1 = pNum[:2]
-    pNum2 = pNum[2:]
-    mult1 = matrixMultiplication(pNum1, k)
-    mult2 = matrixMultiplication(pNum2, k)
-    print(mult1, mult2)
+
+    for i in range(len(pNum)):
+        pNum1 = pNum[i]
+        mult = matrixMultiplication(pNum1, k)
+        lista =[]
+        lista.append(mult)
+    print(lista)
     # cpmod = pmodulo(mult, 26)
     # c = alfabeto(cpmod)
     # return c
