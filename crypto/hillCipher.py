@@ -16,7 +16,7 @@ def matrixMultiplication(a, b):
         linha = []
         for j in range(colunasB):
             soma = 0
-            for k in range(colunasA):  # 🔥 aqui está o segredo
+            for k in range(colunasA):
                 soma += a[i][k] * b[k][j]
             linha.append(soma)
         matrizResultado.append(linha)
