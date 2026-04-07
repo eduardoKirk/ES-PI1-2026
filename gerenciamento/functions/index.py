@@ -1,4 +1,4 @@
-
+import gerenciamento.infra.database
 def menu():
     a = 0
     while not a == 6:
@@ -10,28 +10,30 @@ def menu():
             case 2:
                 # buscar_eleitor()
                 #SELECT
-                menu()
+                pass
             case 3:
                 # remover_eleitor()
                 #DELETE
-                menu()
+                pass
             case 4:
                 # editar_eleitor()
                 #UPDATE
-                menu()
+                pass
             case 5:
                 # listar_eleitor()
                 #GET OU SELECT
-                menu()
+                pass
             case 6:
                 print("Encerrando programa...")
+                gerenciamento.infra.database.cursor.close()
+                gerenciamento.infra.database.conexao.close()
                 break      
  
 
 def cadastrar_eleitor():
         nome = input("digite o nome: ")
         cpf = input("digite o cpf: ")
-        titulo = input("digite o titulo: ")
+        titulo_eleitor = input("digite o titulo: ")
         mesario = input("É mesario? (y/n)")
         chave_acesso = "123456" #Teste
         if mesario == 'y':
@@ -39,7 +41,7 @@ def cadastrar_eleitor():
         else:
             mesario = False
         if validar_cpf(cpf):
-            # post_eleitor(nome, cpf, titulo, mesario, chave_acesso) 
+            gerenciamento.infra.database.post_eleitor(nome, cpf, titulo_eleitor, mesario, chave_acesso) 
             return print(f"Usuario cadastrado com sucesso\nnome: {nome}\ncpf: {cpf}")
         else:
             return print("CPF invalido")

@@ -7,8 +7,8 @@ conexao = mysql.connector.connect(
     database='pi'
 )
 
-cursor = conexao.cursor()
 try:
+    cursor = conexao.cursor()
     cursor.execute("SELECT VERSION()")
     versao = cursor.fetchone()
     print(f"Conexão bem-sucedida! Versão do MySQL: {versao[0]}")
@@ -22,13 +22,12 @@ def listar_usuarios():
         print(f"ID: {id} Nome: {nome} CPF: {cpf}")
 
 
-def post_eleitor(nome, cpf, titulo, mesario, chave_acesso):
-    sql = "INSERT INTO eleitores(nome, cpf, titulo_eleitor, mesario, chave_acesso)"
-    values = (nome, cpf, titulo, mesario, chave_acesso)
-
+def post_eleitor(nome, cpf, titulo_eleitor, mesario, chave_acesso):
+    cursor = conexao.cursor() 
+    sql = "INSERT INTO eleitores(nome, cpf, titulo_eleitor, mesario, chave_acesso) VALUES (%s, %s, %s, %s, %s)"
+    values = (nome, cpf, titulo_eleitor, mesario, chave_acesso)
+    
     cursor.execute(sql, values)
     conexao.commit()
+    cursor.close() 
 
-
-cursor.close()
-conexao.close()
