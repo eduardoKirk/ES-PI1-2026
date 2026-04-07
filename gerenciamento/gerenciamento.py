@@ -61,5 +61,9 @@ def validar_cpf(cpf):
         else:
             return False
 
+# Buscar eleitor
+def buscar_eleitor():
+
+
 
 menu()
