@@ -8,15 +8,15 @@ def menu():
                 cadastrar_eleitor()
                 #POST
             case 2:
-                # buscar_eleitor()
+                buscar_eleitor(gerenciamento.infra.database.conexao) # buscar_eleitor()
                 #SELECT
                 pass
             case 3:
-                # remover_eleitor()
+                remover_eleitor(gerenciamento.infra.database.conexao) # remover_eleitor()
                 #DELETE
                 pass
             case 4:
-                # editar_eleitor()
+                editar_eleitor() # editar_eleitor()
                 #UPDATE
                 pass
             case 5:
