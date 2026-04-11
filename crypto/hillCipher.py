@@ -78,22 +78,14 @@ def transporMatriz(m):
 def hillCipher(p, k):
     p = list(p.upper())
     divisao = [p[i:i + 2] for i in range(0, len(p), 2)]
-    divisaoT = transporMatriz(divisao)
-    pNum = transformaEmNumero(divisaoT)
+    pNum = transformaEmNumero(divisao)
     mult = matrixMultiplication(k, pNum)
 
     multMod = pmodulo(mult, 26)
     result = transformaEmLetra(multMod)
-    print(result)
-    # result = transformaEmLetra(multMod)
-    # print(result)
-    # for i in range(len(pNum)):
-    #     pNum1 = pNum[i]
-        # mult = matrixMultiplication(pNum1, k)
-    #     lista =[]
-    #     lista.append(mult)
-    # print(lista)
-    # cpmod = pmodulo(mult, 26)
-    # c = alfabeto(cpmod)
-    # return c
-c = hillCipher('PENE', matrizA)
+    return result
+
+
+c = hillCipher('sixs', matrizA)
+c2 = hillCipher('even', matrizA)
+print(c, c2)
