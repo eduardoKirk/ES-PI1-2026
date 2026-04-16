@@ -20,7 +20,7 @@ def menu():
                 #UPDATE
                 pass
             case 5:
-                # listar_eleitor()
+                gerenciamento.infra.database.listar_usuarios()
                 #GET OU SELECT
                 pass
             case 6:
@@ -282,14 +282,12 @@ def editar_eleitor():
         WHERE """ + campo + " = %s"
 
         cursor.execute(sql_update, (novo_nome, novo_titulo, novo_mesario, valor))
-        gerenciamento.infra.databaseconexao.commit()
+        gerenciamento.infra.database.conexao.commit()
 
         print("Eleitor atualizado com sucesso")
 
         cursor.close()
 
     except Error as e:
-            print("Erro ao atualizar:", e)
-    
-        
+            print("Erro ao atualizar:", e)    
 menu()
