@@ -1,10 +1,32 @@
+import random
 from mysql.connector import Error
 import gerenciamento.infra.database
+def inicio():
+    while True:
+        option = int(input("Escolha qual área deseja acessar:\n1-Gerenciamento\n2-Votação\n3-Encerrrar Programa"))
+        match option:
+            case 1: 
+                print("\n\n")
+                menu()
+                #Modulo de Gerenciamento
+            case 2:
+                #Modulo de Votação
+                pass
+            case 3:
+                print("Encerrando programa...")
+                gerenciamento.infra.database.cursor.close()
+                gerenciamento.infra.database.conexao.close()
+                break
+            case _:
+                print("Opcão Inválida")
+
+
+
 
 def menu():
     a = 0
     while not a == 6:
-        a = int(input("escolha uma opção:\n1-cadastrar eleitor\n2-buscar eleitor\n3-remover eleitor\n4-editar eleitor\n5-listar eleitor\n6- Sair\n"))
+        a = int(input("Escolha uma opção:\n1-Cadastrar eleitor\n2-Buscar eleitor\n3-Remover eleitor\n4-Editar eleitor\n5-Listar eleitor\n6- Sair\n"))
         match a:
             case 1: 
                 cadastrar_eleitor()
@@ -24,10 +46,10 @@ def menu():
                 #GET OU SELECT
                 pass
             case 6:
-                print("Encerrando programa...")
-                gerenciamento.infra.database.cursor.close()
-                gerenciamento.infra.database.conexao.close()
-                break      
+                print("Voltando...")
+                break
+            case _:
+                print("Opcão Inválida")
  
 
 def cadastrar_eleitor():
@@ -35,18 +57,19 @@ def cadastrar_eleitor():
         cpf = input("Digite o cpf: ")
         titulo_eleitor = input("Digite o titulo: ")
         mesario = input("É mesario? (y/n)")
-        chave_acesso = "123456" #Teste
+        chave_acesso = "123456"
+        sobrenome = nome.split(" ")
+        chave_acesso =  nome[0:2].upper() + sobrenome[1][0].upper()  + str(random.randint(1000,9999))
         if mesario == 'y':
             mesario = True
         else:
             mesario = False
         if validar_cpf(cpf):
             gerenciamento.infra.database.post_eleitor(nome, cpf, titulo_eleitor, mesario, chave_acesso) 
-            return print(f"Usuario cadastrado com sucesso\nnome: {nome}\ncpf: {cpf}")
+            return print(f"Usuario cadastrado com sucesso\nNome: {nome}\nCPF: {cpf}\nChave de Acesso: {chave_acesso}")
         else:
             return print("CPF invalido")
         
-
 def validar_cpf(cpf):
     if len(cpf) != 11:
         return False
@@ -290,4 +313,5 @@ def editar_eleitor():
 
     except Error as e:
             print("Erro ao atualizar:", e)    
-menu()
+
+inicio()
