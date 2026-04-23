@@ -1,11 +1,11 @@
 import random
 from mysql.connector import Error
-import gerenciamento.infra.database
 
 import sys
 import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../')))
 
+import gerenciamento.infra.database
 from crypto.hillCipher import *
 
 
