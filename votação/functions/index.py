@@ -1,5 +1,6 @@
 from mysql.connector import Error
-
+import random
+import string
 import sys
 import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../')))
@@ -59,3 +60,10 @@ def abrirSistemaVotacao(conexao):
 
 if __name__ == '__main__':
     menu()
+
+
+#Protocolo de Votação
+letras = "".join(random.choices(string.ascii_uppercase, k=2))
+protocolo = "V" + letras + "26" + "17" + str(random.randint(10000,99999))
+# 17 = candidato_num[0,1]
+print(protocolo)
