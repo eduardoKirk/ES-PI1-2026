@@ -52,6 +52,15 @@ def abrirSistemaVotacao(conexao):
 
         if eleitor['mesario'] == 1:
             print("Abrir processo\n\n")
+            AbrirVotacao = input("Digite sim para começar o processo")
+    
+            if AbrirVotacao == 'sim' or 'Sim':
+                print("Abrindo processo de votação: ")
+            else:
+                print("Processo não iniciado, voltando a página inicial")
+                AbrirVotacao = 'n'
+                menu()
+
         else:
             print("Você não tem permissão para abrir o sistema de votação\n\n")
 
