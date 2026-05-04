@@ -52,7 +52,7 @@ def abrirSistemaVotacao(conexao):
         if eleitor['mesario'] == 1:
             print("Abrir processo\n\n")
         else:
-            print("Você não tem permição para abrir o sistema de votação\n\n")
+            print("Você não tem permissão para abrir o sistema de votação\n\n")
 
     else:
         print("CPF ou chave de acesso inválidos\n\n")
