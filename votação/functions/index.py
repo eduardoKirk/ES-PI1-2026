@@ -25,7 +25,7 @@ def menu():
                 #resultados
             case 4:
                 print("\n")
-                print("Voltando...")
+                #FecharVotacao
                 break
             case _:
                 print("Opcão Inválida")
@@ -56,10 +56,25 @@ def abrirSistemaVotacao(conexao):
     
             if AbrirVotacao == 'sim' or 'Sim':
                 print("Abrindo processo de votação: ")
-            else:
-                print("Processo não iniciado, voltando a página inicial")
-                AbrirVotacao = 'n'
-                menu()
+                
+                try:
+                    cursor = conexao.cursor()
+                    cursor.execute("TRUNCATE TABLE voto")
+                    cursor.execute("UPDATE eleitores SET status_votacao = 0 WHERE id < 9999")
+                    
+                    conexao.commit()
+                    
+                    VotacaoAberta = 1
+                    print("Votação aberta com sucesso!")
+                    print("Voltando ao menu principal")
+                    
+                except Error as e:
+                    print(e)
+
+                else:
+                    print("Processo não iniciado, voltando a página inicial")
+                    AbrirVotacao = 'n'
+                    return menu
 
         else:
             print("Você não tem permissão para abrir o sistema de votação\n\n")
@@ -69,6 +84,34 @@ def abrirSistemaVotacao(conexao):
 
 if __name__ == '__main__':
     menu()
+
+def FecharVotacao():
+    titulo_eleitor = input("Digite o titulo de eleitor: ")
+    cpf = input("Digite os primeiros 4 digitos do seu CPF: ")
+    chave_acesso = input("Digite a chave de acesso: ")
+
+    try:
+        chave_acesso_crypto = criptografaChave(chave_acesso, chave)
+        cursor = conexao.cursor(dictionary=True)
+
+        sql_busca = f"SELECT * FROM eleitores WHERE titulo_eleitor = '{titulo_eleitor}'"
+        cursor.execute(sql_busca)
+        eleitor = cursor.fetchone()
+
+    except Error as e:
+        print(e)
+
+    eleitor_cpf = descriptografaCPF(eleitor['cpf'], chave)
+
+    if eleitor['chave_acesso'] == chave_acesso_crypto and eleitor_cpf[:4] == cpf:
+
+        if eleitor['mesario'] == 1:
+            print("Abrir processo\n\n")
+            FecharVotacao = input("Digite sim para fechar a votação")
+            if FecharVotacao == 'sim':
+                VotacaoAberta == 0 
+
+    
 
 
 #Protocolo de Votação
