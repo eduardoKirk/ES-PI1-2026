@@ -1,19 +1,19 @@
 import mysql.connector
-# conexao = mysql.connector.connect(
-#     host='localhost',
-#     user='root',
-#     password='Aqua162318##',
-#     database='pi'
-# )
 conexao = mysql.connector.connect(
-    host='127.0.0.1',
-    port=3306,
+    host='localhost',
     user='root',
-    password='Senharuim1@',
-    database='pi',
-    auth_plugin='mysql_native_password',
-    connection_timeout=5
+    password='Aqua162318##',
+    database='pi'
 )
+# conexao = mysql.connector.connect(
+#     host='127.0.0.1',
+#     port=3306,
+#     user='root',
+#     password='Senharuim1@',
+#     database='pi',
+#     auth_plugin='mysql_native_password',
+#     connection_timeout=5
+# )
 
 try:
     cursor = conexao.cursor()
