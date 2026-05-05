@@ -54,17 +54,17 @@ def abrirSistemaVotacao(conexao):
             print("Abrir processo\n\n")
             AbrirVotacao = input("Digite sim para começar o processo")
     
-            if AbrirVotacao == 'sim' or 'Sim':
+            if AbrirVotacao == 'sim':
                 print("Abrindo processo de votação: ")
                 
                 try:
                     cursor = conexao.cursor()
                     cursor.execute("TRUNCATE TABLE voto")
                     cursor.execute("UPDATE eleitores SET status_votacao = 0 WHERE id < 9999")
+                    cursor.execute("UPDATE voto SET abertura_votacao = true")
                     
                     conexao.commit()
-                    
-                    VotacaoAberta = 1
+
                     print("Votação aberta com sucesso!")
                     print("Voltando ao menu principal")
                     
