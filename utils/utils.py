@@ -50,9 +50,27 @@ def descriptografaCPF(cpf, matriz):
             for elemento in linha:
                 string += str(elemento)
     return string
+
+def criptografaProtocolo(protocolo, matriz):
+    protocolo = protocolo[:3] + 'X' + protocolo[3:] + "000"
+    print(protocolo[12:16])
+    result1 = hillCipher(protocolo[0:4], matriz)
+    result2 = hillCipherNum(protocolo[4:8], matriz)
+    result3 = hillCipherNum(protocolo[8:12], matriz)
+    result4 = hillCipherNum(protocolo[12:16], matriz)
+    
+    t = result1, result2, result3, result4
+    string = ''
+    for lista in t:
+        for letra in lista:
+            string += letra
+    return string
+    
     
 
 # print(descriptografaCPF('OFVSJQSLVSIM',chave))
 # print(criptografaCPF('54854174854', chave))
 
 # print(criptografaChave("EDC2412",chave))
+
+print(criptografaProtocolo("VRT269950134", chave))
