@@ -119,19 +119,16 @@ def abrirSistemaVotacao(conexao):
                 except Error as e:
                     print(e)
 
-                else:
-                    print("Processo não iniciado, voltando a página inicial")
-                    AbrirVotacao = 'n'
-                    return menu
+            else:
+                print("Processo não iniciado, voltando a página inicial")
+                AbrirVotacao = 'n'
+                return menu
 
         else:
             print("Você não tem permissão para abrir o sistema de votação\n\n")
 
     else:
         print("CPF ou chave de acesso inválidos\n\n")
-
-if __name__ == '__main__':
-    menu()
 
 def FecharVotacao(conexao):
     titulo_eleitor = input("Digite o titulo de eleitor: ")
@@ -168,3 +165,7 @@ protocolo = "V" + letras + "26" + "17" + str(random.randint(10000,99999))
 # 17 = candidato_num[0,1]
 print(protocolo)
 criptografaProtocolo("VRT269950134", chave)
+
+
+if __name__ == '__main__':
+    menu()
