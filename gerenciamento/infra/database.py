@@ -1,19 +1,19 @@
 import mysql.connector
-conexao = mysql.connector.connect(
-    host='localhost',
-    user='root',
-    password='Aqua162318##',
-    database='pi'
-)
 # conexao = mysql.connector.connect(
-#     host='127.0.0.1',
-#     port=3306,
+#     host='localhost',
 #     user='root',
-#     password='Senharuim1@',
-#     database='pi',
-#     auth_plugin='mysql_native_password',
-#     connection_timeout=5
+#     password='Aqua162318##',
+#     database='pi'
 # )
+conexao = mysql.connector.connect(
+    host='127.0.0.1',
+    port=3306,
+    user='root',
+    password='Senharuim1@',
+    database='pi',
+    auth_plugin='mysql_native_password',
+    connection_timeout=5
+)
 
 try:
     cursor = conexao.cursor()
@@ -38,3 +38,12 @@ def post_eleitor(nome, cpf, titulo_eleitor, mesario, chave_acesso):
     cursor.execute(sql, values)
     conexao.commit()
     cursor.close() 
+
+def listar_candidatos():
+    cursor.execute('SELECT nome, id FROM candidatos;')
+    # cursor.execute('SELECT ')
+    for (nome,id) in cursor.fetchall():
+        cursor.execute(f'SELECT id_candidato FROM votos WHERE id_candidato = {id}')
+        print(f"Nome: {nome[0]}\n")
+
+listar_candidatos()
