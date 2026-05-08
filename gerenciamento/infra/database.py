@@ -39,11 +39,11 @@ def post_eleitor(nome, cpf, titulo_eleitor, mesario, chave_acesso):
     conexao.commit()
     cursor.close() 
 
-def listar_candidatos():
-    cursor.execute('SELECT nome, id FROM candidatos;')
-    # cursor.execute('SELECT ')
-    for (nome,id) in cursor.fetchall():
-        cursor.execute(f'SELECT id_candidato FROM votos WHERE id_candidato = {id}')
-        print(f"Nome: {nome[0]}\n")
+def conta_votos():
+    cursor = conexao.cursor()
+    cursor.execute("SELECT id, nome FROM candidatos;")
+    infos = cursor.fetchall()
+    for (id, nome) in infos:
+        cursor.execute(f"SELECT COUNT(*) FROM votos WHERE id_candidato = {id}")
+        print(f"Nome: {nome}, votos: {cursor.fetchall()[0][0]}")
 
-listar_candidatos()
