@@ -136,6 +136,45 @@ protocolo = "V" + letras + "26" + "17" + str(random.randint(10000,99999))
 print(protocolo)
 criptografaProtocolo("VRT269950134", chave)
 
+def votacao(conexao):
+    titulo_eleitor = input("Digite o titulo de eleitor: ")
+    cpf = input("Digite os primeiros 4 digitos do seu CPF: ")
+    chave_acesso = input("Digite a chave de acesso: ")
+
+    try:
+        chave_acesso_crypto = criptografaChave(chave_acesso, chave)
+        cursor = conexao.cursor(dictionary=True)
+
+        sql_busca = f"SELECT * FROM eleitores WHERE titulo_eleitor = '{titulo_eleitor}'"
+        cursor.execute(sql_busca)
+        eleitor = cursor.fetchone()
+
+    except Error as e:
+        print(e)
+
+    eleitor_cpf = descriptografaCPF(eleitor['cpf'], chave)
+
+    if eleitor['chave_acesso'] == chave_acesso_crypto and eleitor_cpf[:4] == cpf:
+        if eleitor['status_voto'] == 1:
+            print("Você ja realizou o voto.")
+            menu()
+        else:
+            print("Digite o número do candidato")
+            num_canditado = int(input(""))
+            try:
+                cursor = conexao.cursor(dictonary=True)
+                sql_busca = f"SELECT nome, numero, partido FROM candidatos WHERE numero={num_canditado};"
+                cursor.execute(sql_busca)
+                candidato = cursor.fetchone()
+            except Error as e:
+                print(e)
+            print(f"""
+                {eleitor['nome']} {eleitor['numero']} {eleitor['partido']}  
+                """)
+    else:
+        print("CPF ou chave de acesso inválidos\n\n")
+        menu()
+
 
 if __name__ == '__main__':
     menu()
