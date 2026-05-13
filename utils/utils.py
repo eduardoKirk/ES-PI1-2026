@@ -73,4 +73,4 @@ def criptografaProtocolo(protocolo, matriz):
 
 # print(criptografaChave("EDC2412",chave))
 
-print(criptografaProtocolo("VRT269950134", chave))
+# print(criptografaProtocolo("VRT269950134", chave))

@@ -58,7 +58,7 @@ def FecharVotacao(conexao):
 def menu():
     a = 0
     while not a == 6:
-        a = int(input("Escolha uma opção:\n1-Abrir Votação\n2-Auditoria Do Sistema de Votação\n3-Resultado da Votação\n4-Sair\n"))
+        a = int(input("Escolha uma opção:\n1-Abrir Votação\n2-Auditoria Do Sistema de Votação\n3-Resultado da Votação\n4-Fechar Votação\n5- Sair\n"))
         match a:
             case 1: 
                 print("\n")
@@ -74,6 +74,8 @@ def menu():
                 FecharVotacao(gerenciamento.infra.database.conexao)
                 #FecharVotacao
                 break
+            case 5:
+                print("Saindo...")
             case _:
                 print("Opcão Inválida")
 
@@ -133,9 +135,9 @@ def abrirSistemaVotacao(conexao):
 letras = "".join(random.choices(string.ascii_uppercase, k=2))
 protocolo = "V" + letras + "26" + "17" + str(random.randint(10000,99999))
 # 17 = candidato_num[0,1]
-print(protocolo)
 criptografaProtocolo("VRT269950134", chave)
-
+# print(protocolo)
+# print(criptografaProtocolo(protocolo, chave))
 
 if __name__ == '__main__':
     menu()
