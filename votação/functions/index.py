@@ -55,10 +55,11 @@ def FecharVotacao(conexao):
     else:
         print("CPF ou chave de acesso inválidos\n\n")
 
-def menu():
+def votacao_menu():
     a = 0
     while not a == 6:
-        a = int(input("Escolha uma opção:\n1-Abrir Votação\n2-Auditoria Do Sistema de Votação\n3-Resultado da Votação\n4-Fechar Votação\n5- Sair\n"))
+        from app import inicio
+        a = int(input("Escolha uma opção:\n1-Abrir Votação\n2-Auditoria Do Sistema de Votação\n3-Resultado da Votação\n4-Fechar Votação\n5- Sair\n\nEscolha uma opção: "))
         match a:
             case 1: 
                 print("\n")
@@ -76,6 +77,7 @@ def menu():
                 break
             case 5:
                 print("Saindo...")
+                inicio()
             case _:
                 print("Opcão Inválida")
 
@@ -131,13 +133,11 @@ def abrirSistemaVotacao(conexao):
     else:
         print("CPF ou chave de acesso inválidos\n\n")
 
+cursor.execute(f"SELECT numero FROM candidatos WHERE numero = {num_candidato}")
+resultado = cursor.fetchone()
+num_protocolo = str(resultado[0])
+
 #Protocolo de Votação
 letras = "".join(random.choices(string.ascii_uppercase, k=2))
-protocolo = "V" + letras + "26" + "17" + str(random.randint(10000,99999))
-# 17 = candidato_num[0,1]
+protocolo = "V" + letras + "26" + num_protocolo + str(random.randint(10000,99999))
 criptografaProtocolo("VRT269950134", chave)
-# print(protocolo)
-# print(criptografaProtocolo(protocolo, chave))
-
-if __name__ == '__main__':
-    menu()

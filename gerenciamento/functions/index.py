@@ -10,29 +10,11 @@ from crypto.hillCipher import *
 from utils.utils import criptografaCPF, criptografaChave, chave
 
 
-def inicio():
-    while True:
-        option = int(input("Escolha qual área deseja acessar:\n1-Gerenciamento\n2-Votação\n3-Encerrrar Programa\n"))
-        match option:
-            case 1: 
-                print("\n\n")
-                menu()
-                #Modulo de Gerenciamento
-            case 2:
-                #Modulo de Votação
-                pass
-            case 3:
-                print("Encerrando programa...")
-                gerenciamento.infra.database.cursor.close()
-                gerenciamento.infra.database.conexao.close()
-                break
-            case _:
-                print("Opcão Inválida")
-
-def menu():
+def gerenciamento_menu():
+    from app import inicio
     a = 0
     while not a == 6:
-        a = int(input("Escolha uma opção:\n1-Cadastrar eleitor\n2-Buscar eleitor\n3-Remover eleitor\n4-Editar eleitor\n5-Listar eleitor\n6- Sair\n"))
+        a = int(input("Escolha uma opção:\n1-Cadastrar eleitor\n2-Buscar eleitor\n3-Remover eleitor\n4-Editar eleitor\n5-Listar eleitor\n6- Sair\n\nEscolha uma opção: "))
         match a:
             case 1: 
                 print("\n")
@@ -57,9 +39,9 @@ def menu():
                 #GET OU SELECT
                 pass
             case 6:
-                print("\n")
+                print("\n\n")
                 print("Voltando...")
-                break
+                inicio()
             case _:
                 print("Opcão Inválida")
  
@@ -367,8 +349,3 @@ def editar_eleitor():
 
     except Error as e:
             print("Erro ao atualizar:", e)    
-
-inicio()
-
-
-#chaves: AND8175, EDC2412
