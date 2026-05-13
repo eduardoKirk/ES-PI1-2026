@@ -11,18 +11,22 @@ chave = [[2, 1], [3, 4]]
 
 
 def criptografaChave(chave_acesso, matriz):
-    p1 = chave_acesso[:3] + chave_acesso[2]
+    try:
+        p1 = chave_acesso[:3] + chave_acesso[2]
 
-    p1 = hillCipher(p1, matriz)
-    p2 = hillCipherNum(chave_acesso[-4:], matriz)
+        p1 = hillCipher(p1, matriz)
+        p2 = hillCipherNum(chave_acesso[-4:], matriz)
+        
+        result = ''
+        for i in range(len(p1)):
+            for j in range(len(p1[0])):
+                result += str(p1[i][j])
+                result += str(p2[i][j])
+
+        return result
     
-    result = ''
-    for i in range(len(p1)):
-        for j in range(len(p1[0])):
-            result += str(p1[i][j])
-            result += str(p2[i][j])
-
-    return result
+    except Exception as e:
+        return e
 
 
 def criptografaCPF(cpf, matriz):
@@ -39,17 +43,21 @@ def criptografaCPF(cpf, matriz):
 
 
 def descriptografaCPF(cpf, matriz):
-    cpf = list(cpf)
-    result1 = decifrarNum(matriz, cpf[0:4])
-    result2 = decifrarNum(matriz, cpf[4:8])
-    result3 = decifrarNum(matriz, cpf[8:12])
-    t = result1, result2, result3
-    string = ''
-    for matriz in t:
-        for linha in matriz:
-            for elemento in linha:
-                string += str(elemento)
-    return string
+    try:
+        cpf = list(cpf)
+        result1 = decifrarNum(matriz, cpf[0:4])
+        result2 = decifrarNum(matriz, cpf[4:8])
+        result3 = decifrarNum(matriz, cpf[8:12])
+        t = result1, result2, result3
+        string = ''
+        for matriz in t:
+            for linha in matriz:
+                for elemento in linha:
+                    string += str(elemento)
+        return string
+
+    except Exception as e:
+        return e
 
 def criptografaProtocolo(protocolo, matriz):
     protocolo = protocolo[:3] + 'X' + protocolo[3:] + "000"
