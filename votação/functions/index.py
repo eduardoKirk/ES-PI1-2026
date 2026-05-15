@@ -9,6 +9,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../'
 from utils.utils import criptografaCPF, criptografaChave, criptografaProtocolo,descriptografaCPF, chave
 import gerenciamento.infra.database
 from crypto.hillCipher import *
+from logs.logs import log_abertura, log_acesso_negado, log_voto_duplo, log_voto_sucesso, log_encerramento, exibir_logs
 
 
 def FecharVotacao(conexao):
@@ -44,17 +45,21 @@ def FecharVotacao(conexao):
 
                 if chave_confirmacao_crypto == eleitor['chave_acesso']:
                     print("Votação encerrada com sucesso!")
+                    log_encerramento()
                     return 0  # VotacaoAberta = 0
                 else:
                     print("Chave de acesso incorreta. Encerramento cancelado.")
+                    log_acesso_negado()
 
             else:
                 print("Encerramento cancelado. Voltando ao menu anterior.")
     
         else:
             print("Você não tem permissão para encerrar o sistema de votação\n\n")
+            log_acesso_negado()
     else:
         print("CPF ou chave de acesso inválidos\n\n")
+        log_acesso_negado()
 
 def votacao_menu():
     a = 0
@@ -66,7 +71,7 @@ def votacao_menu():
                 abrirSistemaVotacao(gerenciamento.infra.database.conexao)
             case 2:
                 print("\n")
-                #Auditoria do sistema
+                exibir_logs()
             case 3:
                 print("\n")
                 #resultados
@@ -117,6 +122,7 @@ def abrirSistemaVotacao(conexao):
                     conexao.commit()
 
                     print("Votação aberta com sucesso!")
+                    log_abertura()
                     print("Voltando ao menu principal")
                     
                 except Error as e:
@@ -129,9 +135,11 @@ def abrirSistemaVotacao(conexao):
 
         else:
             print("Você não tem permissão para abrir o sistema de votação\n\n")
+            log_acesso_negado()
 
     else:
         print("CPF ou chave de acesso inválidos\n\n")
+        log_acesso_negado()
 
 
 # cursor.execute(f"SELECT numero FROM candidatos WHERE numero = {num_candidato}")
@@ -170,6 +178,7 @@ def votacao(conexao):
     if eleitor['chave_acesso'] == chave_acesso_crypto and eleitor_cpf[:4] == cpf:
         if eleitor['status_voto'] == 1:
             print("Você ja realizou o voto.")
+            log_voto_duplo()
             votacao_menu()
             
         else:
@@ -192,11 +201,13 @@ def votacao(conexao):
                 sql_busca = f"""INSERT INTO votos(id_candidato, id_eleitor, data_hora, protocolo) VALUES ({candidato['id']}, {eleitor['id']}, '{agora.strftime('%Y-%m-%d %H:%M:%S')}', '0101'); """
                 cursor.execute(sql_busca)
                 conexao.commit()
-                cursor.close() 
+                cursor.close()
+                log_voto_sucesso()
             else:
                 print('ta')
     else:
         print("CPF ou chave de acesso inválidos\n\n")
+        log_acesso_negado()
         votacao_menu()
         return
 
