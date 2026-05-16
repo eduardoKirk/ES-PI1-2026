@@ -69,6 +69,34 @@ def cadastrar_eleitor():
         else:
             return print("CPF invalido")
 
+
+def cadastrar_candidato():
+    nome = input("Digite o nome do candidato: ")
+    numero = input("Digite o número de votação: ")
+    partido = input("Digite o partido: ")
+
+    try:
+        cursor = gerenciamento.infra.database.conexao.cursor(dictionary=True)
+
+        sql_busca = "SELECT * FROM candidatos WHERE numero = %s"
+        cursor.execute(sql_busca, (numero,))
+        candidato_existente = cursor.fetchone()
+
+        if candidato_existente:
+            print("Já existe um candidato com esse número. Cadastro cancelado.")
+            cursor.close()
+            return
+
+        sql_insert = "INSERT INTO candidatos (nome, numero, partido) VALUES (%s, %s, %s)"
+        cursor.execute(sql_insert, (nome, numero, partido))
+        gerenciamento.infra.database.conexao.commit()
+
+        print(f"Candidato cadastrado com sucesso!\nNome: {nome}\nNúmero: {numero}\nPartido: {partido}")
+        cursor.close()
+
+    except Error as e:
+        print("Erro ao cadastrar candidato:", e)
+
         
         
 def validar_cpf(cpf):
