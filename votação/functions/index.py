@@ -8,11 +8,12 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../'
 
 from utils.utils import criptografaCPF, criptografaChave, criptografaProtocolo,descriptografaCPF, chave
 import gerenciamento.infra.database
+from gerenciamento.infra.database import conta_votos
 from crypto.hillCipher import *
-from logs.logs import log_abertura, log_acesso_negado, log_voto_duplo, log_voto_sucesso, log_encerramento, exibir_logs
+from Logs.ocorrencias import log_abertura, log_acesso_negado, log_voto_duplo, log_voto_sucesso, log_encerramento, exibir_logs
 
 
-def FecharVotacao(conexao):
+def fecharVotacao(conexao):
     titulo_eleitor = input("Digite o titulo de eleitor: ")
     cpf = input("Digite os primeiros 4 digitos do seu CPF: ")
     chave_acesso = input("Digite a chave de acesso: ")
@@ -77,12 +78,12 @@ def votacao_menu():
                 #resultados
             case 4:
                 print("\n")
-                FecharVotacao(gerenciamento.infra.database.conexao)
+                fecharVotacao(gerenciamento.infra.database.conexao)
                 #FecharVotacao
                 break
             case 5:
                 print("Saindo...")
-                inicio()
+                # inicio()
             case _:
                 print("Opcão Inválida")
 
@@ -108,30 +109,43 @@ def abrirSistemaVotacao(conexao):
 
         if eleitor['mesario'] == 1:
             print("Abrir processo\n\n")
-            AbrirVotacao = input("Digite sim para começar o processo")
+            AbrirVotacao = input("Digite sim para começar o processo\n")
     
             if AbrirVotacao == 'sim':
                 print("Abrindo processo de votação: ")
                 
                 try:
                     cursor = conexao.cursor()
-                    cursor.execute("TRUNCATE TABLE voto")
+                    cursor.execute("TRUNCATE TABLE votos")
                     cursor.execute("UPDATE eleitores SET status_voto = 0 WHERE id < 9999")
-                    cursor.execute("UPDATE voto SET status_voto = true")
+                    # cursor.execute("UPDATE votos SET status_voto = true")
                     
                     conexao.commit()
 
-                    print("Votação aberta com sucesso!")
+                    print("""
+                          ---------------------------
+                          Votação aberta com sucesso!
+                          ---------------------------\n\n""")
                     log_abertura()
-                    print("Voltando ao menu principal")
+                    conta_votos()
                     
                 except Error as e:
                     print(e)
 
+                print("Escolha uma opção: \n1-Votação\n2-Encerrar Sistema de Votação")
+                a = input("")
+                match a:
+                    case '1':
+                        votacao()
+                    case '2':
+                        fecharVotacao()
+                    case _:
+                        print("Opcão Inválida")
+
             else:
                 print("Processo não iniciado, voltando a página inicial")
                 AbrirVotacao = 'n'
-                return menu
+                votacao_menu()
 
         else:
             print("Você não tem permissão para abrir o sistema de votação\n\n")
@@ -140,16 +154,6 @@ def abrirSistemaVotacao(conexao):
     else:
         print("CPF ou chave de acesso inválidos\n\n")
         log_acesso_negado()
-
-
-# cursor.execute(f"SELECT numero FROM candidatos WHERE numero = {num_candidato}")
-# resultado = cursor.fetchone()
-# num_protocolo = str(resultado[0])
-
-# #Protocolo de Votação
-# letras = "".join(random.choices(string.ascii_uppercase, k=2))
-# protocolo = "V" + letras + "26" + num_protocolo + str(random.randint(10000,99999))
-# criptografaProtocolo("VRT269950134", chave)
 
 def votacao(conexao):
     titulo_eleitor = input("Digite o titulo de eleitor: ")
@@ -169,7 +173,8 @@ def votacao(conexao):
         return
 
     if eleitor is None:
-        print("CPF ou chave de acesso inválidooooos\n\n")
+        print("CPF ou chave de acesso inválidos\n\n")
+        log_acesso_negado()
         votacao_menu()
         return
     else: 
@@ -182,29 +187,39 @@ def votacao(conexao):
             votacao_menu()
             
         else:
-            print("Digite o número do candidato")
-            num_canditado = int(input(""))
-            try:
-                cursor = conexao.cursor(dictionary=True)
-                sql_busca = f"SELECT nome, numero, partido, id FROM candidatos WHERE numero={num_canditado};"
-                cursor.execute(sql_busca)
-                candidato = cursor.fetchone()
-            except Error as e:
-                print(e)
-            print(f"""
-                NOME: {candidato['nome']}       NUMERO: {candidato['numero']}       PARTIDO: {candidato['partido']}  
-                """)
-            print("Confirmar voto? s/n")
-            confirmacao = input("")
-            if confirmacao == 's':
-                agora = datetime.now()
-                sql_busca = f"""INSERT INTO votos(id_candidato, id_eleitor, data_hora, protocolo) VALUES ({candidato['id']}, {eleitor['id']}, '{agora.strftime('%Y-%m-%d %H:%M:%S')}', '0101'); """
-                cursor.execute(sql_busca)
-                conexao.commit()
-                cursor.close()
-                log_voto_sucesso()
-            else:
-                print('ta')
+            confirmacao = 'n'
+            while confirmacao == 'n':
+                print("Digite o número do candidato")
+                num_canditado = int(input(""))
+                try:
+                    cursor = conexao.cursor(dictionary=True)
+                    sql_busca = f"SELECT nome, numero, partido, id FROM candidatos WHERE numero={num_canditado};"
+                    cursor.execute(sql_busca)
+                    candidato = cursor.fetchone()
+                except Error as e:
+                    print(e)
+                print(f"""
+                    NOME: {candidato['nome']}       NUMERO: {candidato['numero']}       PARTIDO: {candidato['partido']}  
+                    """)
+                print("Confirmar voto? s/n")
+                confirmacao = input("")
+                if confirmacao == 's':
+                    try:
+                        agora = datetime.now()
+                        letras = "".join(random.choices(string.ascii_uppercase, k=2))
+                        protocolo = "V" + letras + "26" + str(num_canditado) + str(random.randint(10000,99999))
+                        protocolo_crypto = criptografaProtocolo(protocolo, chave)
+                        sql_busca = f"""INSERT INTO votos(id_candidato, id_eleitor, data_hora, protocolo) VALUES 
+                        ({candidato['id']}, {eleitor['id']}, '{agora.strftime('%Y-%m-%d %H:%M:%S')}', '{protocolo_crypto}'); """
+                        cursor.execute(sql_busca)
+                        conexao.commit()
+                        cursor.close()
+                        log_voto_sucesso()
+
+                        print(f"PROTOCOLO: {protocolo}")
+            
+                    except Error as e:
+                        print(e)
     else:
         print("CPF ou chave de acesso inválidos\n\n")
         log_acesso_negado()
@@ -213,3 +228,4 @@ def votacao(conexao):
 
 
 votacao(gerenciamento.infra.database.conexao)
+# votacao_menu()
