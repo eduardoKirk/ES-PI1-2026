@@ -225,7 +225,25 @@ def votacao(conexao):
         log_acesso_negado()
         votacao_menu()
         return
+    
+def resultado_votacao():
+    options = 0
+    while not options == 6:
+        options = int(input("Escolha uma opção:\n1-Boletim de Urna\n2-Auditoria Do Sistema de Votação\n3-Resultado da Votação\n4-Fechar Votação\n5- Sair\n\nEscolha uma opção: "))
+        match a:
+            case 1: 
+                print("\n")
+                boletim_urna()
+            case 2:
+                print("\n")
+                exibir_logs()
+            case 3:
+                print("\n")
+            case _:
+                print("Opcão Inválida")
 
+def boletim_urna():
+    teste
 
 votacao(gerenciamento.infra.database.conexao)
 # votacao_menu()
