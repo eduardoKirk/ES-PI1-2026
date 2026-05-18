@@ -242,7 +242,7 @@ def resultado_votacao():
             case _:
                 print("Opcão Inválida")
 
-def boletim_urna():
+def boletim_urna(conexao):
     try:
         cursor = conexao.cursor()
 
