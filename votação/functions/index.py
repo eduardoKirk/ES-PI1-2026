@@ -252,7 +252,7 @@ def boletim_urna():
         cursor.execute(sql_buscando)
         resultados = cursor.fetchall()
 
-        print("\n===== BOLETIM DE URNA =====")
+        print("\n Boletim de Urna")
         print(f"{'CANDIDATO':<30} {'NÚMERO':<10} {'PARTIDO':<10} {'VOTOS'}")
         print("-" * 60)
         
