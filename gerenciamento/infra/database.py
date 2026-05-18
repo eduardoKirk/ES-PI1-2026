@@ -5,22 +5,22 @@ import mysql.connector
 #     password='Aqua162318##',
 #     database='pi'
 # )
-# conexao = mysql.connector.connect(
-#     host='127.0.0.1',
-#     port=3306,
-#     user='root',
-#     password='Senharuim1@',
-#     database='pi',
-#     auth_plugin='mysql_native_password',
-#     connection_timeout=5
-# )
 conexao = mysql.connector.connect(
-    host='BD-ACD',
+    host='127.0.0.1',
     port=3306,
-    user='BD12022677',
-    password='Qugqz7',
-    database='BD12022677',
+    user='root',
+    password='Senharuim1@',
+    database='pi',
+    auth_plugin='mysql_native_password',
+    connection_timeout=5
 )
+# conexao = mysql.connector.connect(
+#     host='BD-ACD',
+#     port=3306,
+#     user='BD12022677',
+#     password='Qugqz7',
+#     database='BD12022677',
+# )
 try:
     cursor = conexao.cursor()
     cursor.execute("SELECT VERSION()")

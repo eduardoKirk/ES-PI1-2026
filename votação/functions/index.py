@@ -103,7 +103,13 @@ def abrirSistemaVotacao(conexao):
     except Error as e:
         print(e)
 
-    eleitor_cpf = descriptografaCPF(eleitor['cpf'], chave)
+    if eleitor is None:
+        print("Título de eleitor, CPF ou chave de acesso inválidos\n\n")
+        log_acesso_negado()
+        votacao_menu()
+        return
+    else: 
+        eleitor_cpf = descriptografaCPF(eleitor['cpf'], chave)
 
     if eleitor['chave_acesso'] == chave_acesso_crypto and eleitor_cpf[:4] == cpf:
 
@@ -136,7 +142,7 @@ def abrirSistemaVotacao(conexao):
                 a = input("")
                 match a:
                     case '1':
-                        votacao()
+                        votacao(gerenciamento.infra.database.conexao)
                     case '2':
                         fecharVotacao()
                     case _:
@@ -152,7 +158,7 @@ def abrirSistemaVotacao(conexao):
             log_acesso_negado()
 
     else:
-        print("CPF ou chave de acesso inválidos\n\n")
+        print("Título de eleitor, CPF ou chave de acesso inválidos\n\n")
         log_acesso_negado()
 
 def votacao(conexao):
@@ -212,6 +218,8 @@ def votacao(conexao):
                         sql_busca = f"""INSERT INTO votos(id_candidato, id_eleitor, data_hora, protocolo) VALUES 
                         ({candidato['id']}, {eleitor['id']}, '{agora.strftime('%Y-%m-%d %H:%M:%S')}', '{protocolo_crypto}'); """
                         cursor.execute(sql_busca)
+                        sql_busca = f'UPDATE eleitores SET status_voto = 1 WHERE id={eleitor["id"]}'
+                        cursor.execute(sql_busca)
                         conexao.commit()
                         cursor.close()
                         log_voto_sucesso()
@@ -230,7 +238,7 @@ def resultado_votacao():
     options = 0
     while not options == 6:
         options = int(input("Escolha uma opção:\n1-Boletim de Urna\n2-Auditoria Do Sistema de Votação\n3-Resultado da Votação\n4-Fechar Votação\n5- Sair\n\nEscolha uma opção: "))
-        match a:
+        match options:
             case 1: 
                 print("\n")
                 boletim_urna()
@@ -283,3 +291,4 @@ def boletim_urna(conexao):
     except Error as e:
         print(e)
 
+votacao_menu()
