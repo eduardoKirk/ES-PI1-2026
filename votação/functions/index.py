@@ -243,11 +243,11 @@ def resultado_votacao():
                 print("Opcão Inválida")
 
 def boletim_urna():
-  try:
+    try:
         cursor = conexao.cursor()
 
-        sql_buscando = f"""SELECT c.nome, c.numero, c.partido COUNT (v.id_voto)AS total_votos
-        FROM candidatos c RIGHT JOIN voto v ON c.id_candidato = v.id_candidato
+        sql_buscando = f"""SELECT c.nome, c.numero, c.partido, COUNT (v.id_voto)AS total_votos
+        FROM candidatos c LEFT JOIN voto v ON c.id_candidato = v.id_candidato
         GROUP BY c.id_candidato, c.nome, c.numero, c.partido ORDER BY c.nome ASC"""
         cursor.execute(sql_buscando)
         resultados = cursor.fetchall()
@@ -260,34 +260,30 @@ def boletim_urna():
             print(f"{nome:<30} {numero:<10} {partido:<10} {total_votos}")
         
         sql_vencedor = """
-        SELECT 
-            c.nome,
-            c.numero,
-            c.partido,
-            COUNT(v.id_voto) AS total_votos
-        FROM candidatos c
-        LEFT JOIN voto v ON v.id_eleitor = c.id_candidato
-        GROUP BY c.id_candidato, c.nome, c.numero, c.partido
-        ORDER BY total_votos DESC
-        LIMIT 1
-    """
+            SELECT c.nome, c.numero, c.partido, COUNT(v.id_voto) AS total_votos
+            FROM candidatos c
+            LEFT JOIN voto v ON v.id_eleitor = c.id_candidato
+            GROUP BY c.id_candidato, c.nome, c.numero, c.partido
+            ORDER BY total_votos DESC
+            LIMIT 1
+        """
 
-    cursor.execute(sql_vencedor)
-    vencedor = cursor.fetchone()
+        cursor.execute(sql_vencedor)
+        vencedor = cursor.fetchone()
 
-    if vencedor:
-        nome, numero, partido, total_votos = vencedor
-        print("\n Vencedor")
-        print(f"  Nome:         {nome}")
-        print(f"  Número:       {numero}")
-        print(f"  Partido:      {partido}")
-        print(f"  Total Votos:  {total_votos}")
+        if vencedor:
+            nome, numero, partido, total_votos = vencedor
+            print("\n Vencedor")
+            print(f"  Nome:         {nome}")
+            print(f"  Número:       {numero}")
+            print(f"  Partido:      {partido}")
+            print(f"  Total Votos:  {total_votos}")
 
         cursor.close()
     except Error as e:
         print(e)
 
-votacao(gerenciamento.infra.database.conexao)
+# votacao(gerenciamento.infra.database.conexao)
 # votacao_menu()
 
-boletim_urna()
+# boletim_urna()
