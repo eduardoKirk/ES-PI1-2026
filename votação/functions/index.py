@@ -283,7 +283,3 @@ def boletim_urna():
     except Error as e:
         print(e)
 
-# votacao(gerenciamento.infra.database.conexao)
-# votacao_menu()
-
-# boletim_urna()
