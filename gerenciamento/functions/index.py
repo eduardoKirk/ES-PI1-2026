@@ -7,13 +7,12 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../'
 
 import gerenciamento.infra.database
 from crypto.hillCipher import *
-from utils.utils import criptografaCPF, criptografaChave, chave
+from utils.utils import criptografaCPF, criptografaChave, chave, descriptografaCPF
 
 
 def gerenciamento_menu():
-    from app import inicio
     a = 0
-    while not a == 6:
+    while a != 6:
         a = int(input("Escolha uma opção:\n1-Cadastrar eleitor\n2-Buscar eleitor\n3-Remover eleitor\n4-Editar eleitor\n5-Listar eleitor\n6- Sair\n\nEscolha uma opção: "))
         match a:
             case 1: 
@@ -32,16 +31,14 @@ def gerenciamento_menu():
                 print("\n")
                 editar_eleitor()
                 #UPDATE
-                pass
             case 5:
                 print("\n")
                 gerenciamento.infra.database.listar_usuarios()
                 #GET OU SELECT
-                pass
             case 6:
                 print("\n\n")
                 print("Voltando...")
-                inicio()
+                return
             case _:
                 print("Opcão Inválida")
  
@@ -191,7 +188,7 @@ def buscar_eleitor(conexao):
         if eleitor:
             print("\nEleitor encontrado:")
             print("  Nome:   ", eleitor["nome"])
-            print("  CPF:    ", eleitor["cpf"])
+            print("  CPF:    ", descriptografaCPF(eleitor['cpf'], chave)[:-1])
             print("  Título: ", eleitor["titulo_eleitor"])
 
             if eleitor["mesario"] == 1:

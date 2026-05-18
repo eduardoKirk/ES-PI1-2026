@@ -8,7 +8,8 @@ from gerenciamento.functions.index import gerenciamento_menu
 from votação.functions.index import votacao_menu
 
 def inicio():
-    while True:
+    option = 0
+    while option != 3:
         option = int(input("Escolha qual área deseja acessar:\n1-Gerenciamento\n2-Votação\n3-Encerrar Programa\n\nEscolha uma opção: "))
         match option:
             case 1: 

@@ -45,6 +45,8 @@ def fecharVotacao(conexao):
                 chave_confirmacao_crypto = criptografaChave(chave_confirmacao, chave)
 
                 if chave_confirmacao_crypto == eleitor['chave_acesso']:
+                    cursor = conexao.cursor()
+                    cursor.execute("UPDATE eleitores SET status_voto = 1 WHERE id < 9999")
                     print("Votação encerrada com sucesso!")
                     log_encerramento()
                     return 0  # VotacaoAberta = 0
@@ -64,8 +66,8 @@ def fecharVotacao(conexao):
 
 def votacao_menu():
     a = 0
-    while not a == 6:
-        a = int(input("Escolha uma opção:\n1-Abrir Votação\n2-Auditoria Do Sistema de Votação\n3-Resultado da Votação\n4-Fechar Votação\n5- Sair\n\nEscolha uma opção: "))
+    while a != 5:
+        a = int(input("Escolha uma opção:\n1-Sistema Votação\n2-Auditoria Do Sistema de Votação\n3-Resultado da Votação\n4-Fechar Votação\n5- Sair\n\nEscolha uma opção: "))
         match a:
             case 1: 
                 print("\n")
@@ -75,15 +77,14 @@ def votacao_menu():
                 exibir_logs()
             case 3:
                 print("\n")
-                #resultados
+                resultado_votacao()
             case 4:
                 print("\n")
                 fecharVotacao(gerenciamento.infra.database.conexao)
-                #FecharVotacao
-                break
+                #FecharVotaca0
             case 5:
                 print("Saindo...")
-                # inicio()
+                return
             case _:
                 print("Opcão Inválida")
 
@@ -138,15 +139,7 @@ def abrirSistemaVotacao(conexao):
                 except Error as e:
                     print(e)
 
-                print("Escolha uma opção: \n1-Votação\n2-Encerrar Sistema de Votação")
-                a = input("")
-                match a:
-                    case '1':
-                        votacao(gerenciamento.infra.database.conexao)
-                    case '2':
-                        fecharVotacao()
-                    case _:
-                        print("Opcão Inválida")
+                menu_sistema_votacao()
 
             else:
                 print("Processo não iniciado, voltando a página inicial")
@@ -160,6 +153,17 @@ def abrirSistemaVotacao(conexao):
     else:
         print("Título de eleitor, CPF ou chave de acesso inválidos\n\n")
         log_acesso_negado()
+
+def menu_sistema_votacao():
+    print("Escolha uma opção: \n1-Votação\n2-Encerrar Sistema de Votação")
+    a = input("")
+    match a:
+        case '1':
+            votacao(gerenciamento.infra.database.conexao)
+        case '2':
+            fecharVotacao()
+        case _:
+            print("Opcão Inválida")
 
 def votacao(conexao):
     titulo_eleitor = input("Digite o titulo de eleitor: ")
@@ -181,7 +185,7 @@ def votacao(conexao):
     if eleitor is None:
         print("CPF ou chave de acesso inválidos\n\n")
         log_acesso_negado()
-        votacao_menu()
+        menu_sistema_votacao()
         return
     else: 
         eleitor_cpf = descriptografaCPF(eleitor['cpf'], chave)
@@ -190,7 +194,7 @@ def votacao(conexao):
         if eleitor['status_voto'] == 1:
             print("Você ja realizou o voto.")
             log_voto_duplo()
-            votacao_menu()
+            menu_sistema_votacao()
             
         else:
             confirmacao = 'n'
@@ -204,35 +208,41 @@ def votacao(conexao):
                     candidato = cursor.fetchone()
                 except Error as e:
                     print(e)
-                print(f"""
-                    NOME: {candidato['nome']}       NUMERO: {candidato['numero']}       PARTIDO: {candidato['partido']}  
-                    """)
-                print("Confirmar voto? s/n")
-                confirmacao = input("")
-                if confirmacao == 's':
-                    try:
-                        agora = datetime.now()
-                        letras = "".join(random.choices(string.ascii_uppercase, k=2))
-                        protocolo = "V" + letras + "26" + str(num_canditado) + str(random.randint(10000,99999))
-                        protocolo_crypto = criptografaProtocolo(protocolo, chave)
-                        sql_busca = f"""INSERT INTO votos(id_candidato, id_eleitor, data_hora, protocolo) VALUES 
-                        ({candidato['id']}, {eleitor['id']}, '{agora.strftime('%Y-%m-%d %H:%M:%S')}', '{protocolo_crypto}'); """
-                        cursor.execute(sql_busca)
-                        sql_busca = f'UPDATE eleitores SET status_voto = 1 WHERE id={eleitor["id"]}'
-                        cursor.execute(sql_busca)
-                        conexao.commit()
-                        cursor.close()
-                        log_voto_sucesso()
+                if candidato is None:
+                    print("Número do candidato não existe")
+                    menu_sistema_votacao()
+                    return
+                else:             
+                    print(f"""
+                        NOME: {candidato['nome']}       NUMERO: {candidato['numero']}       PARTIDO: {candidato['partido']}  
+                        """)
+                    print("Confirmar voto? s/n")
+                    confirmacao = input("")
+                    if confirmacao == 's':
+                        try:
+                            agora = datetime.now()
+                            letras = "".join(random.choices(string.ascii_uppercase, k=2))
+                            protocolo = "V" + letras + "26" + str(num_canditado) + str(random.randint(10000,99999))
+                            protocolo_crypto = criptografaProtocolo(protocolo, chave)
+                            sql_busca = f"""INSERT INTO votos(id_candidato, id_eleitor, data_hora, protocolo) VALUES 
+                            ({candidato['id']}, {eleitor['id']}, '{agora.strftime('%Y-%m-%d %H:%M:%S')}', '{protocolo_crypto}'); """
+                            cursor.execute(sql_busca)
+                            sql_busca = f'UPDATE eleitores SET status_voto = 1 WHERE id={eleitor["id"]}'
+                            cursor.execute(sql_busca)
+                            conexao.commit()
+                            cursor.close()
+                            log_voto_sucesso()
 
-                        print(f"PROTOCOLO: {protocolo}")
-            
-                    except Error as e:
-                        print(e)
+                            print(f"PROTOCOLO: {protocolo}")
+                
+                        except Error as e:
+                            print(e)
     else:
         print("CPF ou chave de acesso inválidos\n\n")
         log_acesso_negado()
         votacao_menu()
         return
+    menu_sistema_votacao()
     
 def resultado_votacao():
     options = 0
@@ -241,7 +251,7 @@ def resultado_votacao():
         match options:
             case 1: 
                 print("\n")
-                boletim_urna()
+                boletim_urna(gerenciamento.infra.database.conexao)
             case 2:
                 print("\n")
                 exibir_logs()
@@ -254,21 +264,21 @@ def boletim_urna(conexao):
     try:
         cursor = conexao.cursor()
 
-        sql_buscando = f"""SELECT c.nome, c.numero, c.partido, COUNT (v.id_voto)AS total_votos
-        FROM candidatos c LEFT JOIN voto v ON c.id_candidato = v.id_candidato
+        sql_buscando = f"""SELECT c.nome, c.numero, c.partido, COUNT(v.id) AS total_votos
+        FROM candidatos c LEFT JOIN votos v ON c.id_candidato = v.id_candidato
         GROUP BY c.id_candidato, c.nome, c.numero, c.partido ORDER BY c.nome ASC"""
         cursor.execute(sql_buscando)
         resultados = cursor.fetchall()
 
         print("\nBoletim de Urna")
-        print(f"{'CANDIDATO':<30} {'NÚMERO':<10} {'PARTIDO':<10} {'VOTOS'}")
+        print(f"{'CANDIDATO'} {'NÚMERO'} {'PARTIDO'} {'VOTOS'}")
 
         for linha in resultados:
             nome, numero, partido, total_votos = linha
-            print(f"{nome:<30} {numero:<10} {partido:<10} {total_votos}")
+            print(f"{nome} {numero} {partido} {total_votos}")
         
         sql_vencedor = """
-            SELECT c.nome, c.numero, c.partido, COUNT(v.id_voto) AS total_votos
+            SELECT c.nome, c.numero, c.partido, COUNT(v.id) AS total_votos
             FROM candidatos c
             LEFT JOIN voto v ON v.id_eleitor = c.id_candidato
             GROUP BY c.id_candidato, c.nome, c.numero, c.partido
@@ -290,5 +300,3 @@ def boletim_urna(conexao):
         cursor.close()
     except Error as e:
         print(e)
-
-votacao_menu()
