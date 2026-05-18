@@ -9,7 +9,7 @@ from votação.functions.index import votacao_menu
 
 def inicio():
     while True:
-        option = int(input("Escolha qual área deseja acessar:\n1-Gerenciamento\n2-Votação\n3-Encerrrar Programa\n\nEscolha uma opção: "))
+        option = int(input("Escolha qual área deseja acessar:\n1-Gerenciamento\n2-Votação\n3-Encerrar Programa\n\nEscolha uma opção: "))
         match option:
             case 1: 
                 print("\n\n")
@@ -21,6 +21,6 @@ def inicio():
                 print("Encerrando programa...")
                 break
             case _:
-                print("Opcão Inválida")
+                print("Opcão Inválida.")
 
 inicio()
