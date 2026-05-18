@@ -243,7 +243,7 @@ def resultado_votacao():
                 print("Opcão Inválida")
 
 def boletim_urna():
-    try:
+  try:
         cursor = conexao.cursor()
 
         sql_buscando = f"""SELECT c.nome, c.numero, c.partido COUNT (v.id_voto)AS total_votos
@@ -252,15 +252,37 @@ def boletim_urna():
         cursor.execute(sql_buscando)
         resultados = cursor.fetchall()
 
-        print("\n Boletim de Urna")
+        print("\nBoletim de Urna")
         print(f"{'CANDIDATO':<30} {'NÚMERO':<10} {'PARTIDO':<10} {'VOTOS'}")
-        print("-" * 60)
-        
+
         for linha in resultados:
             nome, numero, partido, total_votos = linha
             print(f"{nome:<30} {numero:<10} {partido:<10} {total_votos}")
         
-        print("-" * 60)
+        sql_vencedor = """
+        SELECT 
+            c.nome,
+            c.numero,
+            c.partido,
+            COUNT(v.id_voto) AS total_votos
+        FROM candidatos c
+        LEFT JOIN voto v ON v.id_eleitor = c.id_candidato
+        GROUP BY c.id_candidato, c.nome, c.numero, c.partido
+        ORDER BY total_votos DESC
+        LIMIT 1
+    """
+
+    cursor.execute(sql_vencedor)
+    vencedor = cursor.fetchone()
+
+    if vencedor:
+        nome, numero, partido, total_votos = vencedor
+        print("\n Vencedor")
+        print(f"  Nome:         {nome}")
+        print(f"  Número:       {numero}")
+        print(f"  Partido:      {partido}")
+        print(f"  Total Votos:  {total_votos}")
+
         cursor.close()
     except Error as e:
         print(e)
