@@ -243,7 +243,29 @@ def resultado_votacao():
                 print("Opcão Inválida")
 
 def boletim_urna():
-    teste
+    try:
+        cursor = conexao.cursor()
+
+        sql_buscando = f"""SELECT c.nome, c.numero, c.partido COUNT (v.id_voto)AS total_votos
+        FROM candidatos c RIGHT JOIN voto v ON c.id_candidato = v.id_candidato
+        GROUP BY c.id_candidato, c.nome, c.numero, c.partido ORDER BY c.nome ASC"""
+        cursor.execute(sql_buscando)
+        resultados = cursor.fetchall()
+
+        print("\n===== BOLETIM DE URNA =====")
+        print(f"{'CANDIDATO':<30} {'NÚMERO':<10} {'PARTIDO':<10} {'VOTOS'}")
+        print("-" * 60)
+        
+        for linha in resultados:
+            nome, numero, partido, total_votos = linha
+            print(f"{nome:<30} {numero:<10} {partido:<10} {total_votos}")
+        
+        print("-" * 60)
+        cursor.close()
+    except Error as e:
+        print(e)
 
 votacao(gerenciamento.infra.database.conexao)
 # votacao_menu()
+
+boletim_urna()

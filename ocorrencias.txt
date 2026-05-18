@@ -1,0 +1,6 @@
+[2026-05-18 13:58:42] ALERTA: Tentativa de acesso negado
+[2026-05-18 14:17:10] ALERTA: Tentativa de acesso negado
+[2026-05-18 14:38:11] ALERTA: Tentativa de acesso negado
+[2026-05-18 14:38:29] ALERTA: Tentativa de acesso negado
+[2026-05-18 14:38:36] ALERTA: Tentativa de acesso negado
+[2026-05-18 14:40:46] ALERTA: Tentativa de acesso negado
