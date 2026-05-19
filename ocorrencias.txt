@@ -23,3 +23,11 @@
 [2026-05-19 17:55:09] ALERTA: Tentativa de acesso negado
 [2026-05-19 17:55:23] ABERTURA: Votação iniciada com sucesso. Total de votos zerado.
 [2026-05-19 17:55:38] SUCESSO: Voto realizado com sucesso
+[2026-05-19 18:25:25] ABERTURA: Votação iniciada com sucesso. Total de votos zerado.
+[2026-05-19 18:43:09] ABERTURA: Votação iniciada com sucesso. Total de votos zerado.
+[2026-05-19 18:53:14] ABERTURA: Votação iniciada com sucesso. Total de votos zerado.
+[2026-05-19 18:53:38] SUCESSO: Voto realizado com sucesso
+[2026-05-19 18:55:13] ALERTA: Tentativa de acesso negado
+[2026-05-19 19:09:55] ALERTA: Tentativa de acesso negado
+[2026-05-19 19:11:06] ABERTURA: Votação iniciada com sucesso. Total de votos zerado.
+[2026-05-19 19:11:14] ALERTA: Tentativa de acesso negado

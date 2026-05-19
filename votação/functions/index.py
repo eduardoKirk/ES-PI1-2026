@@ -159,7 +159,7 @@ def menu_sistema_votacao():
         case '1':
             votacao(gerenciamento.infra.database.conexao)
         case '2':
-            fecharVotacao()
+            fecharVotacao(gerenciamento.infra.database.conexao)
         case _:
             print("Opcão Inválida")
 
@@ -262,7 +262,7 @@ def resultado_votacao():
             case 5:
                 print('\n')
                 print('Saindo...')
-                votacao_menu()
+                return
             case _:
                 print("Opcão Inválida")
 
