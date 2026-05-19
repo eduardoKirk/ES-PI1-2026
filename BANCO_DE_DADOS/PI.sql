@@ -47,4 +47,14 @@ MODIFY COLUMN protocolo_votacao VARCHAR(100) NOT NULL;
 ALTER TABLE voto
 ADD COLUMN status_voto boolean default false;
 
+ALTER TABLE votos
+DROP COLUMN id_eleitor;
 
+ALTER TABLE votos
+DROP FOREIGN KEY votos_ibfk_1;
+
+ALTER TABLE votos
+ADD COLUMN id_candidato INT;
+
+ALTER TABLE votos
+ADD FOREIGN KEY votos(id_candidato) REFERENCES candidatos(id_candidato);
