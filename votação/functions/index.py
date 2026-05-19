@@ -8,7 +8,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../'
 
 from utils.utils import criptografaCPF, criptografaChave, criptografaProtocolo,descriptografaCPF, chave
 import gerenciamento.infra.database
-from gerenciamento.infra.database import conta_votos
+from gerenciamento.infra.database import conta_votos, conta_partido_votos
 from crypto.hillCipher import *
 from Logs.ocorrencias import log_abertura, log_acesso_negado, log_voto_duplo, log_voto_sucesso, log_encerramento, exibir_logs
 
@@ -320,6 +320,13 @@ def estatistica_de_comparecimento(conexao):
         print("Abstenção total:", (100 - percentual))
 
         cursor.close()
+    except Error as e:
+        print(e)
+
+def votos_por_partido(conexao):
+    try:
+        conta_partido_votos()
+        
     except Error as e:
         print(e)
 
