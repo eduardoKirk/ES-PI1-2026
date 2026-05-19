@@ -49,6 +49,7 @@ def fecharVotacao(conexao):
                     cursor.execute("UPDATE eleitores SET status_voto = 1 WHERE id < 9999")
                     print("Votação encerrada com sucesso!")
                     log_encerramento()
+                    votacao_menu()
                     return 0  # VotacaoAberta = 0
                 else:
                     print("Chave de acesso incorreta. Encerramento cancelado.")
@@ -56,6 +57,7 @@ def fecharVotacao(conexao):
 
             else:
                 print("Encerramento cancelado. Voltando ao menu anterior.")
+                menu_sistema_votacao()
     
         else:
             print("Você não tem permissão para encerrar o sistema de votação\n\n")
@@ -66,8 +68,8 @@ def fecharVotacao(conexao):
 
 def votacao_menu():
     a = 0
-    while a != 5:
-        a = int(input("Escolha uma opção:\n1-Sistema Votação\n2-Auditoria Do Sistema de Votação\n3-Resultado da Votação\n4-Fechar Votação\n5- Sair\n\nEscolha uma opção: "))
+    while a != 4:
+        a = int(input("Escolha uma opção:\n1-Sistema Votação\n2-Auditoria Do Sistema de Votação\n3-Resultado da Votação\n4- Sair\n\nEscolha uma opção: "))
         match a:
             case 1: 
                 print("\n")
@@ -79,10 +81,6 @@ def votacao_menu():
                 print("\n")
                 resultado_votacao()
             case 4:
-                print("\n")
-                fecharVotacao(gerenciamento.infra.database.conexao)
-                #FecharVotaca0
-            case 5:
                 print("Saindo...")
                 return
             case _:
