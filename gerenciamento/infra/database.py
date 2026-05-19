@@ -53,4 +53,10 @@ def conta_votos():
         cursor.execute(f"SELECT COUNT(*) FROM votos WHERE id_candidato = {id};")
         print(f"Nome: {nome}, votos: {cursor.fetchall()[0][0]}")
 
-
+def conta_partido_votos():
+    cursor = conexao.cursor()
+    cursor.execute("SELECT id, partido FROM candidatos ORDER BY nome ASC;")
+    infos = cursor.fetchall()
+    for (id, partido) in infos:
+        cursor.execute(f"SELECT COUNT(*) FROM votos WHERE id_candidato = {id};")
+        print(f"Partido: {partido}, votos: {cursor.fetchall()[0][0]}")
