@@ -245,7 +245,7 @@ def votacao(conexao):
 def resultado_votacao():
     options = 0
     while not options == 6:
-        options = int(input("Escolha uma opção:\n1-Boletim de Urna\n2-Auditoria Do Sistema de Votação\n3-Estatistica de Comparecimento\n4-Fechar Votação\n5- Sair\n\nEscolha uma opção: "))
+        options = int(input("Escolha uma opção:\n1-Boletim de Urna\n2-Estatísticas de Comparecimento\n3-Votos por Partido\n4-Validação de Integridade\n5- Sair\n\nEscolha uma opção: "))
         match options:
             case 1: 
                 print("\n")
