@@ -47,15 +47,10 @@ def post_eleitor(nome, cpf, titulo_eleitor, mesario, chave_acesso):
 
 def conta_votos():
     cursor = conexao.cursor()
-    cursor.execute("SELECT id, nome FROM candidatos;")
+    cursor.execute("SELECT id, nome FROM candidatos ORDER BY nome ASC;")
     infos = cursor.fetchall()
     for (id, nome) in infos:
-        cursor.execute(f"""
-            SELECT nome, COUNT(*) 
-            FROM votos 
-            WHERE id_candidato = {id}
-            GROUP BY nome
-            ORDER BY nome ASC
-        """)
+        cursor.execute(f"SELECT COUNT(*) FROM votos WHERE id_candidato = {id};")
         print(f"Nome: {nome}, votos: {cursor.fetchall()[0][0]}")
+
 

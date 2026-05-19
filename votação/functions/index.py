@@ -222,8 +222,8 @@ def votacao(conexao):
                             letras = "".join(random.choices(string.ascii_uppercase, k=2))
                             protocolo = "V" + letras + "26" + str(num_canditado) + str(random.randint(10000,99999))
                             protocolo_crypto = criptografaProtocolo(protocolo, chave)
-                            sql_busca = f"""INSERT INTO votos(id_candidato, id_eleitor, data_hora, protocolo) VALUES 
-                            ({candidato['id']}, {eleitor['id']}, '{agora.strftime('%Y-%m-%d %H:%M:%S')}', '{protocolo_crypto}'); """
+                            sql_busca = f"""INSERT INTO votos(id_candidato, data_hora, protocolo) VALUES 
+                            ({candidato['id']}, '{agora.strftime('%Y-%m-%d %H:%M:%S')}', '{protocolo_crypto}'); """
                             cursor.execute(sql_busca)
                             sql_busca = f'UPDATE eleitores SET status_voto = 1 WHERE id={eleitor["id"]}'
                             cursor.execute(sql_busca)
@@ -244,8 +244,8 @@ def votacao(conexao):
     
 def resultado_votacao():
     options = 0
-    while not options == 6:
-        options = int(input("Escolha uma opção:\n1-Boletim de Urna\n2-Estatísticas de Comparecimento\n3-Votos por Partido\n4-Validação de Integridad\n5- Sair\n\nEscolha uma opção: "))
+    while not options == 5:
+        options = int(input("Escolha uma opção:\n1-Boletim de Urna\n2-Estatísticas de Comparecimento\n3-Votos por Partido\n4-Validação de Integridade\n5- Sair\n\nEscolha uma opção: "))
         match options:
             case 1: 
                 print("\n")
@@ -259,12 +259,16 @@ def resultado_votacao():
             case 4:
                 print('\n')
                 validacao_integridade(gerenciamento.infra.database.conexao)
+            case 5:
+                print('\n')
+                print('Saindo...')
+                votacao_menu()
             case _:
                 print("Opcão Inválida")
 
 def boletim_urna(conexao):
     try:
-        cursor = conexao.cursor()
+        cursor = conexao.cursor(dictionary = True)
 
         print("""
             --------------------------------
@@ -275,23 +279,21 @@ def boletim_urna(conexao):
 
         
         sql_vencedor = """
-            SELECT nome, numero, partido, total_votos 
-            FROM votos 
-            GROUP BY nome_candidato
-            ORDER BY COUNT(*) DESC
-            LIMIT 1
+            SELECT candidatos.nome, candidatos.numero, candidatos.partido, COUNT(votos.id_candidato) AS total_votos 
+            FROM candidatos JOIN votos ON candidatos.id = votos.id_candidato GROUP BY candidatos.id, candidatos.nome, candidatos.numero, candidatos.partido 
+            ORDER BY total_votos DESC LIMIT 1;
         """
 
         cursor.execute(sql_vencedor)
         vencedor = cursor.fetchone()
 
-        if vencedor:
+        if vencedor is not None:
             print("""
                 --------------------------------
                     VENCEDOR DA VOTAÇÃO
                 --------------------------------
                     """)
-            print(f"NOME: {vencedor["nome"]}    NÚMERO: {vencedor['numero']}    PARTIDO: {vencedor['partido']}      TOTAL DE VOTOS: {vencedor['total_votos']}")
+            print(f"NOME: {vencedor["nome"]}    NÚMERO: {vencedor['numero']}    PARTIDO: {vencedor['partido']}      TOTAL DE VOTOS: {vencedor['total_votos']}\n\n")
 
         else:
             print("Houve um problema para achar o vencedor")
@@ -323,15 +325,15 @@ def estatistica_de_comparecimento(conexao):
 
 def validacao_integridade(conexao):
     try:
-        cursor = conexao.cursor
+        cursor = conexao.cursor()
         cursor.execute("SELECT COUNT(*) FROM eleitores WHERE status_voto = 1")
         votos_eleitor = cursor.fetchone()[0]
         cursor.execute("SELECT COUNT(*) FROM votos")
         votos_total = cursor.fetchone()[0]
 
-        print("\nValidação de Integridade")
+        print("\nValidação de Integridade\n")
         print("Eleitores que votaram:",      votos_eleitor)
         print("Votos totais:",               votos_total)
-        print("Percentual de Integridade:", (votos_total / votos_eleitor) * 100)
+        print("Percentual de Integridade:", (votos_total / votos_eleitor) * 100, '\n')
     except Error as e:
         print(e)
