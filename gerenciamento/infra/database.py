@@ -51,11 +51,11 @@ def conta_votos():
     infos = cursor.fetchall()
     for (id, nome) in infos:
         cursor.execute(f"""
-            SELECT nome_candidato, COUNT(*) 
+            SELECT nome, COUNT(*) 
             FROM votos 
             WHERE id_candidato = {id}
-            GROUP BY nome_candidato
-            ORDER BY nome_candidato ASC
+            GROUP BY nome
+            ORDER BY nome ASC
         """)
         print(f"Nome: {nome}, votos: {cursor.fetchall()[0][0]}")
 
