@@ -317,4 +317,18 @@ def estatistica_de_comparecimento(conexao):
         cursor.close()
     except Error as e:
         print(e)
-        
+
+def validacao_integridade(conexao):
+    try:
+        cursor = conexao.cursor
+        cursor.execute("SELECT COUNT(*) FROM eleitores WHERE status_voto = 1")
+        votos_eleitor = cursor.fetchone()[0]
+        cursor.execute("SELECT COUNT(*) FROM votos")
+        votos_total = cursor.fetchone()[0]
+
+        print("\nValidação de Integridade")
+        print("Eleitores que votaram:",      votos_eleitor)
+        print("Votos totais:",               votos_total)
+        print("Percentual de Integridade:", (votos_total / votos_eleitor) * 100)
+    except Error as e:
+        print(e)
