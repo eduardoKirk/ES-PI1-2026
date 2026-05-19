@@ -247,7 +247,7 @@ def votacao(conexao):
 def resultado_votacao():
     options = 0
     while not options == 6:
-        options = int(input("Escolha uma opção:\n1-Boletim de Urna\n2-Auditoria Do Sistema de Votação\n3-Resultado da Votação\n4-Fechar Votação\n5- Sair\n\nEscolha uma opção: "))
+        options = int(input("Escolha uma opção:\n1-Boletim de Urna\n2-Auditoria Do Sistema de Votação\n3-Estatistica de Comparecimento\n4-Fechar Votação\n5- Sair\n\nEscolha uma opção: "))
         match options:
             case 1: 
                 print("\n")
@@ -257,6 +257,7 @@ def resultado_votacao():
                 exibir_logs()
             case 3:
                 print("\n")
+                estatistica_de_comparecimento(gerenciamento.infra.database.conexao)
             case _:
                 print("Opcão Inválida")
 
@@ -298,5 +299,28 @@ def boletim_urna(conexao):
             print(f"  Total Votos:  {total_votos}")
 
         cursor.close()
+
     except Error as e:
         print(e)
+        
+def estatistica_de_comparecimento(conexao):
+    try:
+        cursor = conexao.cursor()
+        cursor.execute("SELECT COUNT(*) FROM eleitores WHERE status_voto = 1")
+        votos_contados = cursor.fetchone()[0]
+
+        cursor.execute("SELECT COUNT(*) FROM eleitores")
+        votos_totais = cursor.fetchone()[0]
+
+        percentual = (votos_contados / votos_totais) * 100
+
+        print("\nEstatística de Comparecimento")
+        print("Eleitores aptos:", {votos_totais})
+        print("Eleitores que votaram:", {votos_contados})
+        print("Percentual:", percentual)
+        print("Abstenção total:", (100 - percentual))
+
+        cursor.close()
+    except Error as e:
+        print(e)
+        
