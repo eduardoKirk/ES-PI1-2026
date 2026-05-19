@@ -263,14 +263,13 @@ def boletim_urna(conexao):
     try:
         cursor = conexao.cursor()
 
-        resultados = conta_votos()
+        print("""
+            --------------------------------
+                    BOLETIM DE URNA
+            --------------------------------
+                """)
+        conta_votos()
 
-        print("\nBoletim de Urna")
-        print(f"{'CANDIDATO'} {'NÚMERO'} {'PARTIDO'} {'VOTOS'}")
-
-        for linha in resultados:
-            nome, numero, partido, total_votos = linha
-            print(f"{nome} {numero} {partido} {total_votos}")
         
         sql_vencedor = """
             SELECT nome, numero, partido, total_votos 
