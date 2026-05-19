@@ -263,11 +263,7 @@ def boletim_urna(conexao):
     try:
         cursor = conexao.cursor()
 
-        sql_buscando = f"""SELECT c.nome, c.numero, c.partido, COUNT(v.id) AS total_votos
-        FROM candidatos c LEFT JOIN votos v ON c.id_candidato = v.id_candidato
-        GROUP BY c.id_candidato, c.nome, c.numero, c.partido ORDER BY c.nome ASC"""
-        cursor.execute(sql_buscando)
-        resultados = cursor.fetchall()
+        resultados = conta_votos()
 
         print("\nBoletim de Urna")
         print(f"{'CANDIDATO'} {'NÚMERO'} {'PARTIDO'} {'VOTOS'}")
@@ -277,11 +273,10 @@ def boletim_urna(conexao):
             print(f"{nome} {numero} {partido} {total_votos}")
         
         sql_vencedor = """
-            SELECT c.nome, c.numero, c.partido, COUNT(v.id) AS total_votos
-            FROM candidatos c
-            LEFT JOIN voto v ON v.id_eleitor = c.id_candidato
-            GROUP BY c.id_candidato, c.nome, c.numero, c.partido
-            ORDER BY total_votos DESC
+            SELECT nome, numero, partido, total_votos 
+            FROM votos 
+            GROUP BY nome_candidato
+            ORDER BY COUNT(*) DESC
             LIMIT 1
         """
 
@@ -289,13 +284,15 @@ def boletim_urna(conexao):
         vencedor = cursor.fetchone()
 
         if vencedor:
-            nome, numero, partido, total_votos = vencedor
-            print("\n Vencedor")
-            print(f"  Nome:         {nome}")
-            print(f"  Número:       {numero}")
-            print(f"  Partido:      {partido}")
-            print(f"  Total Votos:  {total_votos}")
+            print("""
+                --------------------------------
+                    VENCEDOR DA VOTAÇÃO
+                --------------------------------
+                    """)
+            print(f"NOME: {vencedor["nome"]}    NÚMERO: {vencedor['numero']}    PARTIDO: {vencedor['partido']}      TOTAL DE VOTOS: {vencedor['total_votos']}")
 
+        else:
+            print("Houve um problema para achar o vencedor")
         cursor.close()
 
     except Error as e:
