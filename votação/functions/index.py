@@ -245,17 +245,20 @@ def votacao(conexao):
 def resultado_votacao():
     options = 0
     while not options == 6:
-        options = int(input("Escolha uma opção:\n1-Boletim de Urna\n2-Estatísticas de Comparecimento\n3-Votos por Partido\n4-Validação de Integridade\n5- Sair\n\nEscolha uma opção: "))
+        options = int(input("Escolha uma opção:\n1-Boletim de Urna\n2-Estatísticas de Comparecimento\n3-Votos por Partido\n4-Validação de Integridad\n5- Sair\n\nEscolha uma opção: "))
         match options:
             case 1: 
                 print("\n")
                 boletim_urna(gerenciamento.infra.database.conexao)
             case 2:
                 print("\n")
-                exibir_logs()
+                estatistica_de_comparecimento(gerenciamento.infra.database.conexao)
             case 3:
                 print("\n")
-                estatistica_de_comparecimento(gerenciamento.infra.database.conexao)
+                # votos_por_partido()
+            case 4:
+                print('\n')
+                validacao_integridade(gerenciamento.infra.database.conexao)
             case _:
                 print("Opcão Inválida")
 
